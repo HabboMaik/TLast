@@ -96,6 +96,10 @@ namespace TLast
         {
             _logFrm.LogError($"Bot #{sender.Id} Desconectado.");
             _bots.Remove(sender);
+
+            sender.BotConnected       -= BotConnected;
+            sender.BotDisconnected    -= BotDisconnected;
+            sender.BotTryingReconnect -= BotTryingReconnect;
             sender.Dispose();
 
             BotCountUpdated?.Invoke(_bots.Count(x => x.IsConnected));
