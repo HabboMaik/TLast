@@ -41,6 +41,12 @@ namespace TLast
         public int  Id          { get; }
         public bool IsConnected { get; private set; }
 
+        public void Dispose()
+        {
+            _keyExchange.Dispose();
+            _clientSocket?.Dispose();
+        }
+
         #region Bot Functions
 
         public async void JoinRoom(int roomId)
@@ -187,11 +193,5 @@ namespace TLast
         }
 
         #endregion
-
-        public void Dispose()
-        {
-            _keyExchange.Dispose();
-            _clientSocket?.Dispose();
-        }
     }
 }
