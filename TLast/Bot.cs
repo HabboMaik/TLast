@@ -9,7 +9,7 @@ using Sulakore.Network.Protocol;
 
 namespace TLast
 {
-    public class Bot
+    public class Bot : IDisposable
     {
         private readonly HKeyExchange _keyExchange;
 
@@ -187,5 +187,11 @@ namespace TLast
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            _keyExchange.Dispose();
+            _clientSocket?.Dispose();
+        }
     }
 }
