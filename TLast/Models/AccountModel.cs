@@ -2,12 +2,12 @@
 
 namespace TLast.Models
 {
-    internal class Account
+    internal class AccountModel
     {
         public string Email;
         public string Password;
 
-        public Account(string account)
+        public AccountModel(string account)
         {
             var split = account.Split(':', StringSplitOptions.RemoveEmptyEntries);
 
