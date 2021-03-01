@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using Eavesdrop;
-
 using Newtonsoft.Json;
 
 using TLast.Models;
+
+using WebSocketSharp.Server;
 
 namespace TLast
 {
@@ -22,22 +24,30 @@ namespace TLast
         private const string USER_API = "https://www.habbo.com.br/api/public/users?name={0}";
 
         //form move
-        public const int WM_NCLBUTTONDOWN = 0xA1;
-        public const int HT_CAPTION       = 0x2;
+        public const     int                 WM_NCLBUTTONDOWN = 0xA1;
+        public const     int                 HT_CAPTION       = 0x2;
+        private  Queue<AccountModel> _accounts;
 
         private readonly BotHandler _botHandler;
 
         private readonly LogFrm _logFrm;
 
+        private readonly WebSocketServer _socketServer;
+
         public MainFrm()
         {
             InitializeComponent();
+            CheckForIllegalCrossThreadCalls = false;
+
             _logFrm                     =  new LogFrm();
             _logFrm.TopMostChanged      += () => TopMost = _logFrm.TopMost;
             _botHandler                 =  new BotHandler(_logFrm);
             _botHandler.BotCountUpdated += BotCountUpdated;
 
             cbboxGender.SelectedIndex = 0;
+
+            _socketServer = new WebSocketServer(27);
+            // _socketServer.AddWebSocketService<CaptchaService>(new CaptchaService());
 
             // var my = "S-1-5-21-809661726-2335831991-902902274-1000";
             // if (my != Ud()) Environment.Exit(0);
@@ -70,6 +80,23 @@ namespace TLast
 
                 Environment.Exit(0);
             }
+
+            var accounts = await File.ReadAllLinesAsync("contas.txt");
+
+            if (accounts.Length == 0) return;
+
+            var validAccounts = new List<AccountModel>();
+
+            foreach (var account in accounts)
+            {
+                var acc = new AccountModel(account);
+                if (!acc.IsValid) continue;
+
+                validAccounts.Add(acc);
+            }
+
+            _accounts = new Queue<AccountModel>(validAccounts);
+            _socketServer.AddWebSocketService("/ric", () => new CaptchaService(_accounts, _botHandler, _logFrm));
         }
 
         private void lblTitle_Click(object sender, EventArgs e)
@@ -119,6 +146,22 @@ namespace TLast
             }
         }
 
+        private void lblServerStatus_Click(object sender, EventArgs e)
+        {
+            if (lblServerStatus.Text == "Não")
+            {
+                _socketServer.Start();
+                lblServerStatus.Text      = "Sim";
+                lblServerStatus.ForeColor = Color.Lime;
+            }
+            else
+            {
+                _socketServer.Stop();
+                lblServerStatus.Text      = "Não";
+                lblServerStatus.ForeColor = Color.Red;
+            }
+        }
+
         #region MoveForm
 
         [DllImport("user32.dll")]
@@ -129,7 +172,7 @@ namespace TLast
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            TerminateProxy();
+            if (_socketServer.IsListening) _socketServer.Stop();
 
             Environment.Exit(0);
         }
@@ -140,59 +183,6 @@ namespace TLast
             {
                 ReleaseCapture();
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
-            }
-        }
-
-        #endregion
-
-        #region Proxy
-
-        private void TerminateProxy()
-        {
-            if (!Eavesdropper.IsRunning) return;
-
-            Eavesdropper.Terminate();
-            Eavesdropper.ResponseInterceptedAsync -= CaptureSSOTokenAsync;
-        }
-
-        private void StartProxy()
-        {
-            if (Eavesdropper.IsRunning) return;
-
-            Eavesdropper.ResponseInterceptedAsync += CaptureSSOTokenAsync;
-            Eavesdropper.Initiate(2727);
-        }
-
-        private async Task CaptureSSOTokenAsync(object sender, ResponseInterceptedEventArgs e)
-        {
-            if (e.Uri.AbsoluteUri == "https://www.habbo.com.br/api/client/clientv2url")
-            {
-                // #if DEBUG
-                //                 MessageBox.Show(e.Uri.AbsoluteUri);
-                // #endif
-                var content = await e.Content.ReadAsStringAsync();
-                var split   = content.Split('/');
-                var sso     = split[^1].Replace("\"}", string.Empty);
-
-                _botHandler.AddBot(sso);
-
-                e.Cancel = true;
-            }
-        }
-
-        private void lblServerStatus_Click(object sender, EventArgs e)
-        {
-            if (lblServerStatus.Text == "Não")
-            {
-                StartProxy();
-                lblServerStatus.Text      = "Sim";
-                lblServerStatus.ForeColor = Color.Lime;
-            }
-            else
-            {
-                TerminateProxy();
-                lblServerStatus.Text      = "Não";
-                lblServerStatus.ForeColor = Color.Red;
             }
         }
 

@@ -16,6 +16,7 @@ namespace TLast
         public LogFrm()
         {
             InitializeComponent();
+            CheckForIllegalCrossThreadCalls = false;
         }
 
         #region Controls

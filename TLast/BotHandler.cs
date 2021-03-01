@@ -4,9 +4,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using TLast.Models;
+
 namespace TLast
 {
-    public class BotHandler
+    internal class BotHandler
     {
         private readonly List<Bot> _bots = new();
         private readonly LogFrm    _logFrm;
@@ -59,6 +61,16 @@ namespace TLast
 
             bot.Connect();
             _bots.Add(bot);
+        }
+
+        public async void AddBotByAccount(AccountModel account, string token)
+        {
+            var habbo = new Habbo(token);
+            if (!await habbo.TryLoginAsync(account.Email, account.Password)) return;
+
+            if (!await habbo.TryGetSsoTokenAsync()) return;
+
+            AddBot(habbo.CurrentSSO);
         }
 
         private void BotTryingReconnect(Bot sender)

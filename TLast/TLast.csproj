@@ -8,8 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="contas.txt" />
     <None Remove="Font.zip" />
     <None Remove="messages.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="contas.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AdditionalFiles>
   </ItemGroup>
 
   <ItemGroup>
@@ -28,7 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Eavesdrop\Eavesdrop\Eavesdrop.csproj" />
     <ProjectReference Include="..\Sulakore\Sulakore\Sulakore.csproj" />
   </ItemGroup>
 

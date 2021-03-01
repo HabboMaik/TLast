@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TLast", "TLast\TLast.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GetKey", "GetKey\GetKey.csproj", "{D0C7CCE1-3D0F-46C5-9030-CBED28EE51D4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eavesdrop", "Eavesdrop\Eavesdrop\Eavesdrop.csproj", "{9555A0C3-D6D9-4236-9F69-0EDF26BDDA38}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sulakore", "Sulakore\Sulakore\Sulakore.csproj", "{3C218C70-4B64-4207-9AAB-055F6B979017}"
 EndProject
 Global
@@ -25,10 +23,6 @@ Global
 		{D0C7CCE1-3D0F-46C5-9030-CBED28EE51D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0C7CCE1-3D0F-46C5-9030-CBED28EE51D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0C7CCE1-3D0F-46C5-9030-CBED28EE51D4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9555A0C3-D6D9-4236-9F69-0EDF26BDDA38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9555A0C3-D6D9-4236-9F69-0EDF26BDDA38}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9555A0C3-D6D9-4236-9F69-0EDF26BDDA38}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9555A0C3-D6D9-4236-9F69-0EDF26BDDA38}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3C218C70-4B64-4207-9AAB-055F6B979017}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3C218C70-4B64-4207-9AAB-055F6B979017}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C218C70-4B64-4207-9AAB-055F6B979017}.Release|Any CPU.ActiveCfg = Release|Any CPU
