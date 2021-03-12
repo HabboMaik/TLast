@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="6.0.0-preview.2.21154.6" />
   </ItemGroup>
 
 </Project>
