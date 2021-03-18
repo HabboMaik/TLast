@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -23,16 +26,21 @@ namespace TLast
 
         private const string USER_API = "https://www.habbo.com.br/api/public/users?name={0}";
 
+        private const string BASE_URL = "http://localhost:8000/api";
+
         //form move
-        public const     int                 WM_NCLBUTTONDOWN = 0xA1;
-        public const     int                 HT_CAPTION       = 0x2;
-        private  Queue<AccountModel> _accounts;
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+        public const int HT_CAPTION       = 0x2;
 
         private readonly BotHandler _botHandler;
 
         private readonly LogFrm _logFrm;
 
         private readonly WebSocketServer _socketServer;
+
+        private readonly string              identifier;
+        private readonly string              token;
+        private          Queue<AccountModel> _accounts;
 
         public MainFrm()
         {
@@ -47,10 +55,9 @@ namespace TLast
             cbboxGender.SelectedIndex = 0;
 
             _socketServer = new WebSocketServer(27);
-            // _socketServer.AddWebSocketService<CaptchaService>(new CaptchaService());
 
-            // var my = "S-1-5-21-809661726-2335831991-902902274-1000";
-            // if (my != Ud()) Environment.Exit(0);
+            identifier = Ud();
+            token      = File.ReadAllText("token.txt").Trim();
         }
 
         private static string Ud()
@@ -67,16 +74,89 @@ namespace TLast
             Invoke((MethodInvoker) delegate { lblConnectedAccounts.Text = $"Contas Conectadas: {count}"; });
         }
 
+        private async Task CheckTokenAsync()
+        {
+            try
+            {
+                var response = await new HttpClient().GetAsync($"{BASE_URL}/user?api_token={token}");
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    TopMost = false;
+
+                    MessageBox.Show("Seu token não é válido.", "TLast - Alerta!", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);
+
+                    Environment.Exit(0);
+                }
+
+                var userData = JsonConvert.DeserializeObject<ApiUserModel>(await response.Content.ReadAsStringAsync());
+
+                if (string.IsNullOrWhiteSpace(userData.Identifier))
+                {
+                    response = await new HttpClient().PutAsync($"{BASE_URL}/user?api_token={token}",
+                                                               new
+                                                                   StringContent($"{{\"identifier\": \"{identifier}\"}}",
+                                                                    Encoding.UTF8, "application/json"));
+
+                    if (response.StatusCode != HttpStatusCode.NoContent) Environment.Exit(0);
+                }
+                else
+                {
+                    if (userData.Identifier != identifier)
+                    {
+                        TopMost = false;
+
+                        MessageBox.Show("Este token está registrado em outro computador.", "TLast - Alerta!",
+                                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                        Environment.Exit(0);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Não foi possível conectar ao servidor!", "TLast - Erro Fatal", MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+
+                Environment.Exit(0);
+            }
+
+            new Thread(PingAsync).Start();
+        }
+
+        private async void PingAsync()
+        {
+            var httpClient = new HttpClient();
+
+            while (true)
+                try
+                {
+                    await Task.Delay(TimeSpan.FromHours(1));
+                    var response = await httpClient.GetAsync($"{BASE_URL}/ping?api_token={token}");
+
+                    if (response.StatusCode != HttpStatusCode.NoContent) Environment.Exit(0);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+
+                    throw;
+                }
+        }
+
         private async void MainFrm_Load(object sender, EventArgs e)
         {
+            await CheckTokenAsync();
+
             var (product, success) = await TryGetModelByUrlTaskAsync<ProductVersionModel>(PRODUCT_VERSION_API);
 
             if (success)
                 Config.ProductVersion = product.ProductVersion;
             else
             {
-                MessageBox.Show("Ocorreu um erro ao baixar informações de versão do jogo, verifique sua conexão com a internet ou cantate o desenvolvedor.",
-                                "Infinity - Alerta!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Ocorreu um erro ao baixar informações da versão do jogo, verifique sua conexão com a internet ou contate o desenvolvedor.",
+                                "TLast - Alerta!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 Environment.Exit(0);
             }
@@ -90,6 +170,7 @@ namespace TLast
             foreach (var account in accounts)
             {
                 var acc = new AccountModel(account);
+
                 if (!acc.IsValid) continue;
 
                 validAccounts.Add(acc);

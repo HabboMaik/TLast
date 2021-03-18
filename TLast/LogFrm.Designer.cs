@@ -141,7 +141,7 @@ namespace TLast
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "LogFrm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Infinity - Logger";
+            this.Text = "TLast - Logger";
             this.TopMost = true;
             ((System.ComponentModel.ISupportInitialize)(this.picClose)).EndInit();
             this.panel1.ResumeLayout(false);

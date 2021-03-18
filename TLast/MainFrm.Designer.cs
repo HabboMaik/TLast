@@ -80,11 +80,11 @@ namespace TLast
             this.lblTitle.AutoSize = true;
             this.lblTitle.Cursor = System.Windows.Forms.Cursors.Hand;
             this.lblTitle.Font = new System.Drawing.Font("Roboto", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.lblTitle.Location = new System.Drawing.Point(212, 21);
+            this.lblTitle.Location = new System.Drawing.Point(242, 21);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(151, 29);
+            this.lblTitle.Size = new System.Drawing.Size(109, 29);
             this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "I N F I N I T Y";
+            this.lblTitle.Text = "T L A S T";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.toolTip1.SetToolTip(this.lblTitle, "Clique para ver os Logs.");
             this.lblTitle.Click += new System.EventHandler(this.lblTitle_Click);
@@ -235,7 +235,7 @@ namespace TLast
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "MainFrm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Infinity";
+            this.Text = "TLast";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.MainFrm_Load);
             this.panel1.ResumeLayout(false);

@@ -4,17 +4,24 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <AssemblyName>Infinity</AssemblyName>
+    <AssemblyName>TLast</AssemblyName>
+    <Copyright>ric © 2021</Copyright>
+    <Authors>ric</Authors>
+    <Company>ric</Company>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="contas.txt" />
     <None Remove="Font.zip" />
     <None Remove="messages.json" />
+    <None Remove="token.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="contas.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AdditionalFiles>
+    <AdditionalFiles Include="token.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </AdditionalFiles>
   </ItemGroup>
