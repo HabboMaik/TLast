@@ -8,6 +8,7 @@
     <Copyright>ric © 2021</Copyright>
     <Authors>ric</Authors>
     <Company>ric</Company>
+    <ApplicationIcon>eternity.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
