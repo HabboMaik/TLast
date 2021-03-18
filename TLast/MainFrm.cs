@@ -26,7 +26,7 @@ namespace TLast
 
         private const string USER_API = "https://www.habbo.com.br/api/public/users?name={0}";
 
-        private const string BASE_URL = "http://localhost:8000/api";
+        private const string BASE_URL = "http://20.81.241.52/api";
 
         //form move
         public const int WM_NCLBUTTONDOWN = 0xA1;
