@@ -14,12 +14,16 @@
     <None Remove="contas.txt" />
     <None Remove="Font.zip" />
     <None Remove="messages.json" />
+    <None Remove="TLast SSO Service.js" />
     <None Remove="token.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <AdditionalFiles Include="contas.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AdditionalFiles>
+    <AdditionalFiles Include="TLast SSO Service.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AdditionalFiles>
     <AdditionalFiles Include="token.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
