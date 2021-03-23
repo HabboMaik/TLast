@@ -58,6 +58,13 @@ namespace TLast
 
             identifier = Ud();
             token      = File.ReadAllText("token.txt").Trim();
+
+            if (!string.IsNullOrEmpty(token)) return;
+
+            MessageBox.Show("Você precisa colocar seu token no arquivo de texto 'token.txt'.", "TLast - Erro Fatal!",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            Environment.Exit(0);
         }
 
         private static string Ud()
@@ -84,7 +91,7 @@ namespace TLast
                 {
                     TopMost = false;
 
-                    MessageBox.Show("Seu token não é válido.", "TLast - Alerta!", MessageBoxButtons.OK,
+                    MessageBox.Show("Seu token não é válido!", "TLast - Alerta!", MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
 
                     Environment.Exit(0);
@@ -116,7 +123,7 @@ namespace TLast
             }
             catch (Exception)
             {
-                MessageBox.Show("Não foi possível conectar ao servidor!", "TLast - Erro Fatal", MessageBoxButtons.OK,
+                MessageBox.Show("Não foi possível conectar ao servidor!", "TLast - Erro Fatal!", MessageBoxButtons.OK,
                                 MessageBoxIcon.Error);
 
                 Environment.Exit(0);
@@ -133,7 +140,10 @@ namespace TLast
                 try
                 {
                     await Task.Delay(TimeSpan.FromHours(1));
-                    var response = await httpClient.GetAsync($"{BASE_URL}/ping?api_token={token}");
+
+                    var response =
+                        await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head,
+                                                                          $"{BASE_URL}/ping?api_token={token}"));
 
                     if (response.StatusCode != HttpStatusCode.NoContent) Environment.Exit(0);
                 }
